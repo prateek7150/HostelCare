@@ -1,0 +1,86 @@
+const express = require('express')
+const MessFeedback = require('../model/Messfebdack')
+
+exports.createFeedback = async (req , res)=>{
+    try{
+        const{studentName , roomNumber , rating , comment} = req.body;
+
+        if(!studentName || !rating){
+            return res.status(400).json({
+                success : false,
+                message :"Student Name and ratings are required"
+            })
+        }
+        const feedback = await MessFeedback.create({
+            studentName,
+            roomNumber,
+            rating,
+            comment
+        })
+
+        return res.status(201).json({
+            success:true,
+            feedback
+        })
+    }catch(error){
+        console.log(error.message);
+
+        return res.status(500).json({
+            success:false,
+            message:'Error Creating feedback'
+        })
+        
+    }
+}
+exports.getAllFeedback = async (req, res) => {
+  try {
+    const feedbacks = await MessFeedback.find().sort({ createdAt: -1 });
+
+    return res.status(200).json({
+      success: true,
+      feedbacks,
+    });
+  } catch (error) {
+    console.log("Error in getAllFeedback:", error.message);
+    return res.status(500).json({
+      success: false,
+      message: "Error fetching feedback",
+    });
+  }
+};
+
+exports.getFeedbackStats = async (req, res) => {
+  try {
+    const total = await MessFeedback.countDocuments();
+    if (total === 0) {
+      return res.status(200).json({
+        success: true,
+        total: 0,
+        averageRating: 0,
+      });
+    }
+
+    const result = await MessFeedback.aggregate([
+      {
+        $group: {
+          _id: null,
+          avgRating: { $avg: "$rating" },
+        },
+      },
+    ]);
+
+    const avgRating = result[0]?.avgRating || 0;
+
+    return res.status(200).json({
+      success: true,
+      total,
+      averageRating: avgRating.toFixed(2),
+    });
+  } catch (error) {
+    console.log("Error in getFeedbackStats:", error.message);
+    return res.status(500).json({
+      success: false,
+      message: "Error fetching feedback stats",
+    });
+  }
+};
