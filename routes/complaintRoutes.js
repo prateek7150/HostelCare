@@ -7,7 +7,8 @@ const {
   getStudentComplaints,
   updateComplaintStatus,
   getComplaintByStatus,
-  getMyComplaints
+  getMyComplaints,
+  deleteComplaint
 } = require('../controllers/complaintController');
 
 const authMiddleware = require('../middleware/authMiddleware');
@@ -21,5 +22,5 @@ router.get('/my', authMiddleware, getMyComplaints);
 router.get('/student/:studentId', getStudentComplaints);
 router.patch('/:complaintId/status', updateComplaintStatus);
 router.get('/status/:status', getComplaintByStatus);
-
+router.delete("/:complaintId",authMiddleware, deleteComplaint);
 module.exports = router;

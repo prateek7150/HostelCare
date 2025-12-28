@@ -19,6 +19,12 @@ const userSchema = new mongoose.Schema(
       minlength: 6,
    
     },
+    roomNumber:{
+      type:String,
+      required:function(){
+        return this.role ==="student";
+      },
+    },
     role: {
       type: String,
       enum: ['student', 'admin', 'warden'],

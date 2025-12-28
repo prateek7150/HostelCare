@@ -1,0 +1,40 @@
+body.bg-light {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background:
+    linear-gradient(
+      rgba(17, 24, 39, 0.65),
+      rgba(17, 24, 39, 0.75)
+    ),
+    url("../assets/bg-campus.jpg");
+
+  background-size: cover;
+  background-position: center;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 360px;
+  padding: 2rem;
+
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+
+  box-shadow:
+    0 30px 60px rgba(0, 0, 0, 0.35);
+}
+
+.login-card h3 {
+  text-align: center;
+  font-weight: 700;
+}
+
+@media (max-width: 480px) {
+  .login-card {
+    margin: 0 1rem;
+    padding: 1.5rem;
+  }
+}

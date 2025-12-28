@@ -7,34 +7,70 @@ const generateToken = (id) => {
   });
 };
 
-exports.register = async (req , res, next) => {
-  try {
-    const { name, email, password, role } = req.body;
 
-    const userExists = await User.findOne({ email });
-    if (userExists) {
-      return res.status(400).json({ message: 'User Already Exists' });
+
+exports.register = async (req, res) => {
+  try {
+    const { name, email, password, role, roomNumber } = req.body;
+
+    if (!name || !email || !password || !role) {
+      return res.status(400).json({
+        success: false,
+        message: "Name, email, password and role are required",
+      });
     }
 
-    const user = await User.create({ name, email, password, role });
-    const token = generateToken(user._id);
+   
+    if (role === "student" && !roomNumber) {
+      return res.status(400).json({
+        success: false,
+        message: "Room number is required for students",
+      });
+    }
 
-    res.status(201).json({
+    const existing = await User.findOne({ email });
+    if (existing) {
+      return res.status(400).json({
+        success: false,
+        message: "Email already registered",
+      });
+    }
+
+    const userData = {
+      name,
+      email,
+      password,
+      role,
+    };
+
+    if (roomNumber) {
+      userData.roomNumber = roomNumber;
+    }
+
+    const user = await User.create(userData);
+
+    return res.status(201).json({
       success: true,
-      token,
-      user: { 
+      message: "User registered successfully",
+      user: {
         _id: user._id,
         name: user.name,
+        email: user.email,
         role: user.role,
-        email: user.email
-      }
+        roomNumber: user.roomNumber || null,
+      },
     });
-  } catch(error) {
-    next(error);
+  } catch (error) {
+    console.error("Register error:", error.message);
+    return res.status(500).json({
+      success: false,
+      message: "Error registering user",
+    });
   }
 };
 
-exports.login = async(req, res, next) => {
+
+exports.login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
@@ -53,10 +89,15 @@ exports.login = async(req, res, next) => {
         _id: user._id,
         name: user.name,
         role: user.role,
-        email: user.email
+        email: user.email,
+        roomNumber: user.roomNumber || null,  
       }
     });
-  } catch(error) {
-    next(error);
+  } catch (error) {
+    console.error("Login error:", error.message);
+  return res.status(500).json({
+    success: false,
+    message: "Server error during login"
+  });
   }
 };

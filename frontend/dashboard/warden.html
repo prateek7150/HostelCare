@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Warden Dashboard - Hostel Care</title>
+
+  <!-- Bootstrap CSS -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  >
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <link rel="stylesheet" href="../css/animations.css">
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark hc-navbar">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">Hostel Care 🏨</a>
+      <div class="d-flex align-items-center">
+        <span id="nav-role" class="text-white me-3 small"></span>
+        <button class="btn btn-sm btn-outline-light" onclick="logout()">Logout</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main content -->
+  <div class="page-container fade-in">
+
+    <!-- Filters / header -->
+    <div class="card hc-card mb-4">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Complaints Overview</h5>
+        <div class="d-flex align-items-center gap-2">
+          <label for="statusFilter" class="me-1 small text-muted mb-0">Filter:</label>
+          <select id="statusFilter" class="form-select form-select-sm" style="width: 160px;">
+            <option value="">All</option>
+            <option value="pending">Pending</option>
+            <option value="in-progress">In Progress</option>
+            <option value="resolved">Resolved</option>
+          </select>
+        </div>
+      </div>
+      <div class="card-body">
+        <p class="small text-muted mb-0">
+          View all complaints and update their status. Only wardens can modify status.
+        </p>
+      </div>
+    </div>
+
+    <!-- Complaints table -->
+    <div class="card hc-card">
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table align-middle" id="wardenComplaintsTable">
+            <thead>
+              <tr>
+                <th>Student</th>
+                <th>Title</th>
+                <th>Category</th>
+                <th>Status</th>
+                <th>Change Status</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- rows injected by JS -->
+            </tbody>
+          </table>
+        </div>
+        <p id="wardenTableMsg" class="mt-2 small"></p>
+
+        <div id="paginationControls"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/warden.js"></script>
+  
+
+</body>
+</html>

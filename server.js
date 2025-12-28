@@ -8,11 +8,14 @@ const path = require('path')
 const connectDB = require('./src/config/db.js')
 
 
+
+
 //Routes
 const authRoutes = require('./routes/authRoutes.js')
 const complaintRoutes = require('./routes/complaintRoutes.js')
 const feedbackRoutes = require('./routes/feedbackRoutes.js')
 const analyticsRoutes = require('./routes/analyticsRoutes.js')
+const adminRoutes = require('./routes/adminRoutes.js')
 
 //error handler
 
@@ -28,10 +31,24 @@ const PORT = process.env.PORT || 5000
 connectDB()
 
 //Initalizing global middlewares
-app.use(cors({origin:process.env.CLIENT_URL || '*' , credentials :true}))
+app.use(cors({
+  origin: true,
+  credentials: true
+}));
+
+
 app.use(express.json())
 app.use(express.urlencoded({extended : true}))
 app.use(cookieParser())
+app.use(express.static(path.join(__dirname, 'frontend')));
+
+app.use((req, res, next) => {
+  if (req.hostname === "localhost:5000") {
+    return res.redirect(`http://10.90.182.19:5000${req.originalUrl}`);
+  }
+  next();
+});
+
 
 app.set('view engine' , 'ejs')
 
@@ -40,9 +57,10 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 //Checking the health 
-app.get('/' , (req,res)=>{
-    res.json({message : 'Hostel Care API is running !'})
-})
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'frontend', 'index.html'));
+});
+
 //Mounting API routes 
 app.use('/api/auth' , authRoutes)
 
@@ -51,6 +69,9 @@ app.use('/api/complaints' , complaintRoutes)
 app.use('/api/feedback' , feedbackRoutes)
 
 app.use('/api/analytics' , analyticsRoutes)
+
+app.use('/api/admin', adminRoutes)
+
 
 //Error handler for unmatched routes
 // app.use((req,res,next)=>{
@@ -65,8 +86,15 @@ app.use('/api/analytics' , analyticsRoutes)
 // app.use(errorHandler)
 
 //Starting The server
+const open = require("open");
 
-app.listen(PORT , ()=>{
-    console.log(`Server is live on Port ${PORT}`);
-    
-})
+
+
+app.listen(PORT, "0.0.0.0", async () => {
+  console.log(`Server running on port ${PORT}`);
+
+  if (process.env.NODE_ENV !== "production") {
+    const open = (await import("open")).default;
+    open(`http://localhost:${PORT}`);
+  }
+});
