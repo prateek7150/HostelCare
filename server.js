@@ -21,9 +21,10 @@ const PORT = process.env.PORT || 5000;
 connectDB();
 
 app.use(cors({
-  origin: "https://YOUR-VERCEL-FRONTEND-URL",
+  origin: "https://hostel-care-five.vercel.app",
   credentials: true
 }));
+
 
 
 app.use(express.json());
