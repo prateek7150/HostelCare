@@ -34,33 +34,27 @@ function redirectByRole(role) {
   } else if (role === "admin") {
     window.location.href = "dashboard/admin.html";
   } else {
-    // fallback
     window.location.href = "dashboard/student.html";
   }
 }
 
-// ===== logout (used from navbar/buttons) =====
+// ===== logout =====
 function logout() {
   clearAuth();
   window.location.href = "/";
 }
 
-
-
-// ===== protect pages (we'll use this later on dashboards) =====
+// ===== protect pages =====
 function requireAuth(allowedRoles = []) {
   const user = getCurrentUser();
   const token = getToken();
 
   if (!user || !token) {
-    // not logged in at all
-    // adjust path if this JS is used inside subfolders
     window.location.href = "../index.html";
     return;
   }
 
   if (allowedRoles.length && !allowedRoles.includes(user.role)) {
-    // role not allowed - send to correct dashboard
     redirectByRole(user.role);
   }
 }
@@ -68,7 +62,7 @@ function requireAuth(allowedRoles = []) {
 // ===== login form handling =====
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("loginForm");
-  if (!form) return; // not on login page
+  if (!form) return;
 
   const emailInput = document.getElementById("email");
   const passwordInput = document.getElementById("password");
@@ -87,21 +81,24 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     try {
-      // Adjust path if your backend route is different
+      // ✅ DO NOT JSON.stringify here
       const data = await apiRequest("/auth/login", {
         method: "POST",
-        body: JSON.stringify({ email, password })
+        body: {
+          email,
+          password
+        }
       });
 
-      // Expecting { token, user }
       if (!data.token || !data.user) {
         throw new Error("Invalid server response.");
       }
 
       saveAuth(data.token, data.user);
       redirectByRole(data.user.role);
+
     } catch (err) {
-      console.error(err);
+      console.error("Login error:", err);
       errorMsg.textContent = err.message || "Login failed. Please try again.";
     }
   });
