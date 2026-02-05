@@ -1,10 +1,13 @@
 // api.js
 
-const API_BASE_URL = `${window.location.protocol}//${window.location.host}/api`;
+// 🔥 IMPORTANT: Backend base URL (Render)
+const API_BASE_URL = "https://hostelcare-backend.onrender.com/api";
 
 /**
- * Helper to call the backend.
- * Adds Authorization header if token is available.
+ * Helper function to call backend APIs
+ * - Automatically attaches JWT token (if present)
+ * - Supports cookies (credentials)
+ * - Throws meaningful errors
  */
 async function apiRequest(path, options = {}) {
   const token = localStorage.getItem("hc_token");
@@ -14,26 +17,27 @@ async function apiRequest(path, options = {}) {
     ...(options.headers || {})
   };
 
+  // Attach JWT token if available
   if (token) {
     headers["Authorization"] = `Bearer ${token}`;
   }
 
-  const res = await fetch(`${API_BASE_URL}${path}`, {
-    ...options,
+  const response = await fetch(`${API_BASE_URL}${path}`, {
+    method: options.method || "GET",
     headers,
-    credentials: "include"
+    body: options.body ? JSON.stringify(options.body) : undefined,
+    credentials: "include" // IMPORTANT for cookies
   });
 
   let data = {};
   try {
-    data = await res.json();
-  } catch (e) {
-    // no JSON body
+    data = await response.json();
+  } catch (err) {
+    // response has no JSON body
   }
 
-  if (!res.ok) {
-    const message = data.message || "Something went wrong";
-    throw new Error(message);
+  if (!response.ok) {
+    throw new Error(data.message || "Something went wrong");
   }
 
   return data;
