@@ -1,12 +1,6 @@
-// ===============================
-// Pagination State
-// ===============================
 let currentPage = 1;
 const PAGE_LIMIT = 10;
 
-// ===============================
-// On Page Load
-// ===============================
 document.addEventListener("DOMContentLoaded", () => {
   requireAuth(["warden"]);
 
@@ -21,10 +15,8 @@ document.addEventListener("DOMContentLoaded", () => {
       `Role: ${user.role.charAt(0).toUpperCase()}${user.role.slice(1)}`;
   }
 
-  // Initial load
   loadAllComplaints(tableBody, tableMsg, "", currentPage);
 
-  // Filter change → reset page
   if (statusFilter) {
     statusFilter.addEventListener("change", () => {
       currentPage = 1;
@@ -33,9 +25,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-// ===============================
-// Load Complaints (Paginated)
-// ===============================
 async function loadAllComplaints(
   tableBodyEl,
   msgEl,
@@ -69,7 +58,6 @@ async function loadAllComplaints(
     tableBodyEl.innerHTML = complaints.map(renderWardenRow).join("");
     renderPagination(pagination, statusFilter);
   } catch (err) {
-    console.error(err);
     tableBodyEl.innerHTML = `
       <tr>
         <td colspan="6" class="text-danger text-center">
@@ -80,9 +68,6 @@ async function loadAllComplaints(
   }
 }
 
-// ===============================
-// Render Single Row (WITH DESCRIPTION)
-// ===============================
 function renderWardenRow(c) {
   const status = (c.status || "pending").toLowerCase();
   const isResolved = status === "resolved";
@@ -97,25 +82,24 @@ function renderWardenRow(c) {
         </small>
       </td>
 
-     <td data-label="Complaint">
-  <strong>${escapeHtml(c.title || "")}</strong>
+      <td data-label="Complaint">
+        <strong>${escapeHtml(c.title || "")}</strong>
 
-  <div class="text-muted small mt-1 description-clamp">
-    ${escapeHtml(c.description || "No description provided")}
-  </div>
+        <div class="text-muted small mt-1 description-clamp">
+          ${escapeHtml(c.description || "No description provided")}
+        </div>
 
-  ${
-    c.description && c.description.length > 120
-      ? `<button
-          type="button"
-          class="btn btn-link p-0 small mt-1 toggle-desc"
-          onclick="toggleDescription(this)">
-          View more
-        </button>`
-      : ""
-  }
-</td>
-
+        ${
+          c.description && c.description.length > 120
+            ? `<button
+                type="button"
+                class="btn btn-link p-0 small mt-1 toggle-desc"
+                onclick="toggleDescription(this)">
+                View more
+              </button>`
+            : ""
+        }
+      </td>
 
       <td data-label="Category">
         ${escapeHtml(c.category || "-")}
@@ -161,9 +145,6 @@ function renderWardenRow(c) {
   `;
 }
 
-// ===============================
-// Update Complaint Status
-// ===============================
 async function updateComplaintStatus(complaintId, buttonEl) {
   const row = buttonEl.closest("tr");
   if (!row) return;
@@ -177,7 +158,7 @@ async function updateComplaintStatus(complaintId, buttonEl) {
   try {
     await apiRequest(`/complaints/${complaintId}/status`, {
       method: "PATCH",
-      body: JSON.stringify({ status: select.value }),
+      body: { status: select.value }
     });
 
     badge.textContent = formatStatus(select.value);
@@ -193,17 +174,14 @@ async function updateComplaintStatus(complaintId, buttonEl) {
       buttonEl.disabled = false;
       buttonEl.textContent = "Update";
     }
+
   } catch (err) {
-    console.error(err);
     alert(err.message || "Failed to update status.");
     buttonEl.disabled = false;
     buttonEl.textContent = "Update";
   }
 }
 
-// ===============================
-// Pagination
-// ===============================
 function renderPagination(pagination, statusFilter = "") {
   const container = document.getElementById("paginationControls");
   if (!container) return;
@@ -244,9 +222,6 @@ function changePage(page, statusFilter = "") {
   );
 }
 
-// ===============================
-// Helpers
-// ===============================
 function formatStatus(status) {
   const val = (status || "").toLowerCase();
   if (val === "in-progress" || val === "inprogress") return "In Progress";
@@ -261,7 +236,7 @@ function formatDate(dateStr) {
   return d.toLocaleDateString("en-IN", {
     year: "numeric",
     month: "short",
-    day: "2-digit",
+    day: "2-digit"
   });
 }
 
@@ -271,6 +246,7 @@ function escapeHtml(str) {
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;");
 }
+
 function toggleDescription(btn) {
   const desc = btn.previousElementSibling;
   if (!desc) return;
@@ -278,4 +254,3 @@ function toggleDescription(btn) {
   const expanded = desc.classList.toggle("expanded");
   btn.textContent = expanded ? "Hide" : "View more";
 }
-
