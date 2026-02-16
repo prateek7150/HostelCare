@@ -12,7 +12,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const summaryEl = document.getElementById("adminSummary");
 
   if (user && navRoleEl) {
-    navRoleEl.textContent = `Role: ${user.role.charAt(0).toUpperCase()}${user.role.slice(1)}`;
+    navRoleEl.textContent =
+      `Role: ${user.role.charAt(0).toUpperCase()}${user.role.slice(1)}`;
   }
 
   loadAdminComplaints(tableBody, tableMsg, summaryEl, "", adminCurrentPage);
@@ -28,6 +29,35 @@ document.addEventListener("DOMContentLoaded", () => {
         statusFilter.value,
         adminCurrentPage
       );
+    });
+  }
+
+  const form = document.getElementById("createWardenForm");
+  if (form) {
+    const msg = document.getElementById("wardenMsg");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      msg.textContent = "";
+
+      const name = document.getElementById("wardenName").value.trim();
+      const email = document.getElementById("wardenEmail").value.trim();
+      const password = document.getElementById("wardenPassword").value;
+
+      try {
+        await apiRequest("/admin/create-warden", {
+          method: "POST",
+          body: { name, email, password }
+        });
+
+        msg.textContent = "Warden created successfully";
+        msg.className = "text-success small";
+        form.reset();
+
+      } catch (err) {
+        msg.textContent = err.message || "Failed to create warden";
+        msg.className = "text-danger small";
+      }
     });
   }
 });
@@ -74,7 +104,8 @@ async function loadAdminComplaints(
       }).length;
       const resolved = complaints.filter(c => (c.status || "").toLowerCase() === "resolved").length;
 
-      summaryEl.textContent = `Total: ${total} | Pending: ${pending} | In Progress: ${inProgress} | Resolved: ${resolved}`;
+      summaryEl.textContent =
+        `Total: ${total} | Pending: ${pending} | In Progress: ${inProgress} | Resolved: ${resolved}`;
     }
 
     tableBodyEl.innerHTML = complaints.map(c => {
@@ -223,33 +254,3 @@ function escapeHtml(str) {
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;");
 }
-document.addEventListener("DOMContentLoaded", () => {
-  const form = document.getElementById("createWardenForm");
-  if (!form) return;
-
-  const msg = document.getElementById("wardenMsg");
-
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    msg.textContent = "";
-
-    const name = document.getElementById("wardenName").value.trim();
-    const email = document.getElementById("wardenEmail").value.trim();
-    const password = document.getElementById("wardenPassword").value;
-
-    try {
-      await apiRequest("/admin/create-warden", {
-        method: "POST",
-        body: JSON.stringify({ name, email, password }),
-      });
-
-      msg.textContent = "Warden created successfully";
-      msg.className = "text-success small";
-
-      form.reset();
-    } catch (err) {
-      msg.textContent = err.message || "Failed to create warden";
-      msg.className = "text-danger small";
-    }
-  });
-});
