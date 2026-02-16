@@ -4,69 +4,68 @@
 document.getElementById("complaintForm")?.addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  const token = localStorage.getItem("token");
-  const title = document.getElementById("title").value;
-  const description = document.getElementById("description").value;
+  const title = document.getElementById("title").value.trim();
+  const description = document.getElementById("description").value.trim();
   const category = document.getElementById("category").value;
 
+  if (!title || !description || !category) {
+    alert("All fields are required.");
+    return;
+  }
+
   try {
-    const res = await fetch("http://localhost:5000/api/complaints", {
+    await apiRequest("/complaints", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`
-      },
-      body: JSON.stringify({ title, description, category })
+      body: { title, description, category }
     });
 
-    const data = await res.json();
+    alert("Complaint submitted successfully!");
+    document.getElementById("complaintForm").reset();
+    loadMyComplaints();
 
-    if (data.success) {
-      alert("Complaint submitted successfully!");
-      document.getElementById("complaintForm").reset();
-      loadMyComplaints(); // refresh list
-    } else {
-      alert(data.message || "Failed to submit complaint.");
-    }
   } catch (err) {
-    alert("Error submitting complaint. Please try again.");
+    console.error("Error submitting complaint:", err);
+    alert(err.message || "Failed to submit complaint.");
   }
 });
 
+
 // Fetch and render student’s complaints
 async function loadMyComplaints() {
-  const token = localStorage.getItem("token");
-
   try {
-    const res = await fetch("http://localhost:5000/api/complaints/my", {
-      headers: { "Authorization": `Bearer ${token}` }
+    const data = await apiRequest("/complaints/my");
+
+    const tableBody = document.querySelector("#complaintsTable tbody");
+    tableBody.innerHTML = "";
+
+    if (!data.complaints || data.complaints.length === 0) {
+      tableBody.innerHTML = `
+        <tr>
+          <td colspan="5" class="text-center">No complaints found.</td>
+        </tr>
+      `;
+      return;
+    }
+
+    data.complaints.forEach(c => {
+      const row = `
+        <tr>
+          <td>${c.title}</td>
+          <td>${c.description}</td>
+          <td>${c.category}</td>
+          <td><span class="badge bg-${statusColor(c.status)}">${c.status}</span></td>
+          <td>${new Date(c.createdAt).toLocaleString()}</td>
+        </tr>
+      `;
+      tableBody.innerHTML += row;
     });
 
-    const data = await res.json();
-
-    if (data.success) {
-      const tableBody = document.querySelector("#complaintsTable tbody");
-      tableBody.innerHTML = "";
-
-      data.complaints.forEach(c => {
-        const row = `
-          <tr>
-            <td>${c.title}</td>
-            <td>${c.description}</td>
-            <td>${c.category}</td>
-            <td><span class="badge bg-${statusColor(c.status)}">${c.status}</span></td>
-            <td>${new Date(c.createdAt).toLocaleString()}</td>
-          </tr>
-        `;
-        tableBody.innerHTML += row;
-      });
-    } else {
-      alert(data.message || "Failed to load complaints.");
-    }
   } catch (err) {
-    alert("Error loading complaints.");
+    console.error("Error loading complaints:", err);
+    alert(err.message || "Error loading complaints.");
   }
 }
+
 
 // Helper: map status to Bootstrap badge color
 function statusColor(status) {
@@ -78,5 +77,6 @@ function statusColor(status) {
   }
 }
 
+
 // Load complaints on page load
-window.onload = loadMyComplaints;
+window.addEventListener("DOMContentLoaded", loadMyComplaints);
