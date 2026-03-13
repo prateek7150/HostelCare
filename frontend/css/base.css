@@ -1,198 +1,197 @@
-/* ===============================
-   Global Design Tokens
-   =============================== */
+/* ============================================================
+   1. DESIGN TOKENS (The "Vibe" Controls)
+   ============================================================ */
 :root {
-  --hc-primary: #7c3aed;
-  --hc-primary-2: #2563eb;
-  --hc-primary-3: #0ea5e9;
+  /* Vibrant Brand Colors */
+  --brand-primary: #7c3aed;   /* Vivid Violet */
+  --brand-secondary: #2563eb; /* Royal Blue */
+  --brand-accent: #0ea5e9;    /* Sky Blue */
+  
+  /* Modern Gradient */
+  --brand-gradient: linear-gradient(135deg, var(--brand-primary), var(--brand-secondary), var(--brand-accent));
+  
+  /* Glassmorphism Surface */
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.4);
+  --glass-blur: 16px;
 
-  --hc-surface: #ffffff;
-  --hc-border: rgba(255, 255, 255, 0.4);
+  /* Typography */
+  --text-main: #0f172a;       /* Slate 900 */
+  --text-muted: #64748b;      /* Slate 500 */
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
 
-  --hc-text-main: #111827;
-  --hc-text-muted: #6b7280;
-
-  --hc-radius-card: 14px;
-  --hc-shadow-soft: 0 20px 40px rgba(0, 0, 0, 0.18);
+  /* Elevation & Shape */
+  --radius-card: 24px;
+  --radius-btn: 12px;
+  --shadow-soft: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+  --shadow-float: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  
+  /* Transitions */
+  --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* ===============================
-   Reset
-   =============================== */
-*,
-*::before,
-*::after {
+/* ============================================================
+   2. GLOBAL RESET & BASE
+   ============================================================ */
+*, *::before, *::after {
   box-sizing: border-box;
 }
 
-html,
-body {
+html, body {
+  height: 100%;
   margin: 0;
   padding: 0;
-  height: 100%;
 }
-
-/* ===============================
-   BACKGROUND (IMAGE + BLUR EXTENSION)
-   =============================== */
 
 body {
-  position: relative;
-  min-height: 100vh;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-    Roboto, "Helvetica Neue", Arial, sans-serif;
-
-  color: var(--hc-text-main);
+  font-family: var(--font-sans);
+  color: var(--text-main);
   line-height: 1.6;
+  background-color: #f8fafc;
+  display: flex;
+  flex-direction: column;
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* Blurred full-screen background */
+/* Dynamic Background Mesh */
 body::before {
   content: "";
   position: fixed;
   inset: 0;
-  z-index: -2;
-
-  background:
-    linear-gradient(
-      135deg,
-      rgba(124, 58, 237, 0.35),
-      rgba(37, 99, 235, 0.35),
-      rgba(14, 165, 233, 0.35)
-    ),
-    url("../assets/bg-campus.jpeg");
-
-  background-size: cover;
-  background-position: center;
-
-  filter: blur(8px);
-  transform: scale(1.05);
+  z-index: -1;
+  background: 
+    radial-gradient(circle at 0% 0%, rgba(124, 58, 237, 0.12) 0%, transparent 40%),
+    radial-gradient(circle at 100% 100%, rgba(14, 165, 233, 0.12) 0%, transparent 40%),
+    url("../assets/bg-campus.jpeg") center/cover no-repeat;
+  filter: saturate(1.2);
 }
-
-
-/* ===============================
-   Layout
-   =============================== */
 
 .page-container {
-  max-width: 1100px;
-  margin: 24px auto 40px;
-  padding: 0 16px;
+  flex: 1;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem;
 }
 
-/* ===============================
-   Cards (FLOATING GLASS)
-   =============================== */
+/* ============================================================
+   3. COMPONENTS
+   ============================================================ */
 
+/* The Modern Floating Card */
 .hc-card {
-  background: rgba(255, 255, 255, 0.93);
-  border-radius: var(--hc-radius-card);
-  border: 1px solid var(--hc-border);
-
-  box-shadow:
-    0 20px 40px rgba(0, 0, 0, 0.18),
-    0 8px 16px rgba(0, 0, 0, 0.12);
-
-  backdrop-filter: blur(8px);
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-soft);
+  padding: 2.5rem;
+  transition: var(--transition-smooth);
 }
 
-/* ===============================
-   Buttons
-   =============================== */
+.hc-card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-float);
+  border-color: rgba(255, 255, 255, 0.6);
+}
 
+/* Vibrant Buttons */
 .btn {
-  border-radius: 10px;
-  font-size: 0.85rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  padding: 0.8rem 1.8rem;
+  border-radius: var(--radius-btn);
+  transition: var(--transition-smooth);
+  border: none;
+  cursor: pointer;
+  letter-spacing: -0.01em;
 }
 
 .btn-primary {
-  background: linear-gradient(
-    135deg,
-    var(--hc-primary),
-    var(--hc-primary-2)
-  );
-  border: none;
+  background: var(--brand-gradient);
+  color: #ffffff;
+  box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
 }
 
 .btn-primary:hover {
-  background: linear-gradient(
-    135deg,
-    var(--hc-primary-2),
-    var(--hc-primary-3)
-  );
+  filter: brightness(1.1);
+  transform: scale(1.03);
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4);
 }
 
-/* ===============================
-   Tables
-   =============================== */
+.btn-primary:active {
+  transform: scale(0.97);
+}
+
+/* Forms & Inputs */
+.form-control, .form-select {
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  transition: var(--transition-smooth);
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: var(--brand-primary);
+  box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.1);
+}
+
+/* Tables */
+.table-container {
+  overflow-x: auto;
+  border-radius: var(--radius-btn);
+  background: white;
+}
 
 table {
-  font-size: 0.9rem;
+  width: 100%;
+  border-collapse: collapse;
 }
 
-/* ===============================
-   Mobile Fixes
-   =============================== */
+th {
+  background: #f1f5f9;
+  padding: 1rem;
+  text-align: left;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
 
+td {
+  padding: 1rem;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+/* ============================================================
+   4. FOOTER & NAVIGATION
+   ============================================================ */
+.hc-footer {
+  background: #0f172a;
+  color: #f8fafc;
+  padding: 4rem 1.5rem;
+  margin-top: 4rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* ============================================================
+   5. RESPONSIVE DESIGN
+   ============================================================ */
 @media (max-width: 768px) {
   .page-container {
-    margin: 12px auto 20px;
-    padding: 0 10px;
+    padding: 1.5rem 1rem;
   }
-}
-
-/* ===============================
-   MOBILE CARD 
-   =============================== */
-@media (max-width: 768px) {
+  
   .hc-card {
-    width: 100%;
-    max-width: 100%;
-    margin: 0 auto 16px;
-    padding: 16px;
+    padding: 1.5rem;
+    border-radius: 20px;
   }
-}
-@media (max-width: 768px) {
-  h1, h2, h3 {
-    font-size: 1.3rem;
-  }
-
-  .card-header h5 {
-    font-size: 1rem;
-  }
-
-  .form-control,
-  .form-select,
-  .btn {
-    font-size: 0.95rem;
-  }
-}
-.hc-footer {
-  background: #111827;
-  color: #e5e7eb;
-  margin-top: auto;
-}
-
-.hc-footer .text-muted {
-  color: #9ca3af !important;
-}
-
-@media (max-width: 576px) {
-  .hc-footer {
-    font-size: 0.85rem;
-  }
-}
-html, body {
-  height: 100%;
-}
-
-body {
-  display: flex;
-  flex-direction: column;
-}
-
-/* main content should expand */
-.main-content {
-  flex: 1;
+  
+  h1 { font-size: 1.75rem; }
+  h2 { font-size: 1.5rem; }
 }
