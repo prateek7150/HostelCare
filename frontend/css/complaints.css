@@ -1,5 +1,66 @@
-/* css/complaints.css */
+/* ============================================================
+   MODERNIZED STATUS BADGES
+   ============================================================ */
+
 .badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px; /* Space for the indicator dot */
+  padding: 4px 12px;
+  
+  /* Typography */
   text-transform: capitalize;
-  font-size: 0.85rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  
+  /* Shape */
+  border-radius: 100px; /* Fully pill-shaped */
+  border: 1px solid transparent;
+  
+  /* Smooth transition for hover states */
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: default;
+}
+
+/* Subtle "Indicator Dot" using pseudo-element */
+.badge::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: currentColor; /* Matches text color automatically */
+  display: inline-block;
+}
+
+/* ============================================================
+   STATUS-SPECIFIC VARIANTS (Vibrant & Soft)
+   ============================================================ */
+
+/* PENDING - Warm Amber */
+.badge.complaint-status-pending {
+  background-color: rgba(249, 115, 22, 0.12);
+  color: #c2410c;
+  border-color: rgba(249, 115, 22, 0.2);
+}
+
+/* IN PROGRESS - Electric Blue */
+.badge.complaint-status-in-progress {
+  background-color: rgba(37, 99, 235, 0.1);
+  color: #1d4ed8;
+  border-color: rgba(37, 99, 235, 0.2);
+}
+
+/* RESOLVED - Emerald Green */
+.badge.complaint-status-resolved {
+  background-color: rgba(16, 185, 129, 0.12);
+  color: #047857;
+  border-color: rgba(16, 185, 129, 0.2);
+}
+
+/* Hover Effect for Interactivity */
+.badge:hover {
+  filter: brightness(0.95);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
