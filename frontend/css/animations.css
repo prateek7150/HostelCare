@@ -1,17 +1,86 @@
-/* Simple, understated fade-in animation */
-.fade-in {
-  opacity: 0;
-  transform: translateY(8px);
-  animation: fadeInUp 260ms ease-out forwards;
+/* ============================================================
+   MODERN PHYSICS-BASED ANIMATIONS
+   ============================================================ */
+
+:root {
+  /* This cubic-bezier creates a "spring" or "elastic" feel */
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
+/* 1. REFINED ENTRANCE (The "Spring" Fade)
+   Instead of a simple slide, this has a tiny 'bounce' at the end 
+*/
+.fade-in {
+  opacity: 0;
+  transform: translateY(20px) scale(0.98);
+  animation: springIn 0.6s var(--ease-spring) forwards;
+}
+
+@keyframes springIn {
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
+}
+
+/* 2. STAGGERED CHILDREN 
+   Apply this class to a container to make children pop in one by one.
+   Usage: Add style="--i: 1", "--i: 2" etc. to your child elements.
+*/
+.stagger-item {
+  animation-delay: calc(var(--i) * 0.1s);
+}
+
+/* 3. THE "GENTLE FLOAT" 
+   Perfect for hero images or featured cards to make them feel weightless.
+*/
+.hc-float {
+  animation: floating 6s ease-in-out infinite;
+}
+
+@keyframes floating {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-15px); }
+  100% { transform: translateY(0px); }
+}
+
+/* 4. MAGNETIC BUTTON EFFECT 
+   Makes the button feel like it's being physically pressed into the screen.
+*/
+.btn-active-state:active {
+  transform: scale(0.95);
+  filter: brightness(0.9);
+  transition: transform 0.1s var(--ease-out-expo);
+}
+
+/* 5. SKELETON SHIMMER 
+   For loading states—feels much more premium than a static spinner.
+*/
+.shimmer {
+  background: linear-gradient(
+    90deg, 
+    rgba(255,255,255,0) 0%, 
+    rgba(255,255,255,0.4) 50%, 
+    rgba(255,255,255,0) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* 6. MICRO-INTERACTION: ICON BOUNCE
+   Add this to an icon inside a button to make it jump on hover.
+*/
+.btn:hover .icon-bounce {
+  animation: iconJump 0.4s var(--ease-spring);
+}
+
+@keyframes iconJump {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
 }
