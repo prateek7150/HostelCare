@@ -1,37 +1,34 @@
 /* ============================================================
-   1. DESIGN TOKENS (The "Vibe" Controls)
+   1. DESIGN TOKENS
    ============================================================ */
 :root {
-  /* Vibrant Brand Colors */
-  --brand-primary: #7c3aed;   /* Vivid Violet */
-  --brand-secondary: #2563eb; /* Royal Blue */
-  --brand-accent: #0ea5e9;    /* Sky Blue */
-  
-  /* Modern Gradient */
+  --brand-primary: #7c3aed;
+  --brand-secondary: #2563eb;
+  --brand-accent: #0ea5e9;
   --brand-gradient: linear-gradient(135deg, var(--brand-primary), var(--brand-secondary), var(--brand-accent));
   
-  /* Glassmorphism Surface */
   --glass-bg: rgba(255, 255, 255, 0.7);
   --glass-border: rgba(255, 255, 255, 0.4);
   --glass-blur: 16px;
 
-  /* Typography */
-  --text-main: #0f172a;       /* Slate 900 */
-  --text-muted: #64748b;      /* Slate 500 */
+  --text-main: #0f172a;
+  --text-muted: #64748b;
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
 
-  /* Elevation & Shape */
   --radius-card: 24px;
   --radius-btn: 12px;
-  --shadow-soft: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
-  --shadow-float: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
-  
-  /* Transitions */
+  --shadow-soft: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+  --shadow-float: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
   --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* Status Colors */
+  --status-pending: #ea580c;
+  --status-progress: #0284c7;
+  --status-resolved: #166534;
 }
 
 /* ============================================================
-   2. GLOBAL RESET & BASE
+   2. GLOBAL RESET & DYNAMIC BACKGROUND
    ============================================================ */
 *, *::before, *::after {
   box-sizing: border-box;
@@ -47,14 +44,14 @@ body {
   font-family: var(--font-sans);
   color: var(--text-main);
   line-height: 1.6;
-  background-color: #f8fafc;
+  background-color: #f8fafc; /* Fallback color */
   display: flex;
   flex-direction: column;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
 }
 
-/* Dynamic Background Mesh */
+/* Fixed Background Image Fix */
 body::before {
   content: "";
   position: fixed;
@@ -63,135 +60,135 @@ body::before {
   background: 
     radial-gradient(circle at 0% 0%, rgba(124, 58, 237, 0.12) 0%, transparent 40%),
     radial-gradient(circle at 100% 100%, rgba(14, 165, 233, 0.12) 0%, transparent 40%),
-    url("../assets/bg-campus.jpeg") center/cover no-repeat;
+    url("../assets/bg-campus.jpeg") center/cover no-repeat; /* PATH CORRECTED */
   filter: saturate(1.2);
-}
-
-.page-container {
-  flex: 1;
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 3rem 1.5rem;
+  background-attachment: fixed;
 }
 
 /* ============================================================
-   3. COMPONENTS
+   3. NAVIGATION
    ============================================================ */
-
-/* The Modern Floating Card */
-.hc-card {
-  background: var(--glass-bg);
-  backdrop-filter: blur(var(--glass-blur));
-  -webkit-backdrop-filter: blur(var(--glass-blur));
-  border: 1px solid var(--glass-border);
-  border-radius: var(--radius-card);
-  box-shadow: var(--shadow-soft);
-  padding: 2.5rem;
-  transition: var(--transition-smooth);
+.hc-navbar {
+  background: rgba(15, 23, 42, 0.8); 
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.75rem 1.5rem;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
 }
 
-.hc-card:hover {
-  transform: translateY(-6px);
-  box-shadow: var(--shadow-float);
-  border-color: rgba(255, 255, 255, 0.6);
-}
-
-/* Vibrant Buttons */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 600;
-  padding: 0.8rem 1.8rem;
-  border-radius: var(--radius-btn);
-  transition: var(--transition-smooth);
-  border: none;
-  cursor: pointer;
-  letter-spacing: -0.01em;
-}
-
-.btn-primary {
-  background: var(--brand-gradient);
-  color: #ffffff;
-  box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
-}
-
-.btn-primary:hover {
-  filter: brightness(1.1);
-  transform: scale(1.03);
-  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4);
-}
-
-.btn-primary:active {
-  transform: scale(0.97);
-}
-
-/* Forms & Inputs */
-.form-control, .form-select {
-  background: rgba(255, 255, 255, 0.8);
-  border: 1px solid #e2e8f0;
-  border-radius: 10px;
-  padding: 0.75rem 1rem;
-  transition: var(--transition-smooth);
-}
-
-.form-control:focus {
-  outline: none;
-  border-color: var(--brand-primary);
-  box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.1);
-}
-
-/* Tables */
+/* ============================================================
+   4. DATA TABLES (Modern Card Style)
+   ============================================================ */
 .table-container {
   overflow-x: auto;
   border-radius: var(--radius-btn);
-  background: white;
+  margin-top: 2rem;
 }
 
-table {
+#wardenComplaintsTable {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0 12px;
 }
 
-th {
-  background: #f1f5f9;
-  padding: 1rem;
-  text-align: left;
-  font-size: 0.8rem;
-  text-transform: uppercase;
+#wardenComplaintsTable thead th {
   color: var(--text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  padding: 12px 20px;
 }
 
-td {
-  padding: 1rem;
-  border-bottom: 1px solid #f1f5f9;
+#wardenComplaintsTable tbody tr {
+  background: var(--glass-bg);
+  backdrop-filter: blur(8px);
+  transition: var(--transition-smooth);
+  box-shadow: var(--shadow-soft);
 }
+
+#wardenComplaintsTable tbody tr:hover {
+  transform: scale(1.01) translateY(-2px);
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: var(--shadow-float);
+}
+
+#wardenComplaintsTable td {
+  padding: 16px 20px;
+  vertical-align: middle;
+  border-top: 1px solid var(--glass-border);
+  border-bottom: 1px solid var(--glass-border);
+}
+
+/* Rounded Corners for Floating Rows */
+#wardenComplaintsTable td:first-child { border-left: 1px solid var(--glass-border); border-radius: 12px 0 0 12px; }
+#wardenComplaintsTable td:last-child { border-right: 1px solid var(--glass-border); border-radius: 0 12px 12px 0; }
 
 /* ============================================================
-   4. FOOTER & NAVIGATION
+   5. STATUS PILLS
    ============================================================ */
-.hc-footer {
-  background: #0f172a;
-  color: #f8fafc;
-  padding: 4rem 1.5rem;
-  margin-top: 4rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
+.badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.75rem;
+  display: inline-flex;
+  align-items: center;
+}
+
+.complaint-status-pending {
+  background: rgba(249, 115, 22, 0.15);
+  color: var(--status-pending);
+  border: 1px solid rgba(249, 115, 22, 0.3);
+}
+
+.complaint-status-in-progress {
+  background: rgba(14, 165, 233, 0.15);
+  color: var(--status-progress);
+  border: 1px solid rgba(14, 165, 233, 0.3);
+}
+
+.complaint-status-resolved {
+  background: rgba(22, 163, 74, 0.15);
+  color: var(--status-resolved);
+  border: 1px solid rgba(22, 163, 74, 0.3);
 }
 
 /* ============================================================
-   5. RESPONSIVE DESIGN
+   6. RESPONSIVE TRANSFORMATION
    ============================================================ */
 @media (max-width: 768px) {
-  .page-container {
-    padding: 1.5rem 1rem;
+  #wardenComplaintsTable, 
+  #wardenComplaintsTable tbody, 
+  #wardenComplaintsTable tr, 
+  #wardenComplaintsTable td {
+    display: block;
   }
-  
-  .hc-card {
-    padding: 1.5rem;
-    border-radius: 20px;
+
+  #wardenComplaintsTable thead { display: none; }
+
+  #wardenComplaintsTable tr {
+    margin-bottom: 20px;
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-card);
+    padding: 16px;
+    background: white;
   }
-  
-  h1 { font-size: 1.75rem; }
-  h2 { font-size: 1.5rem; }
+
+  #wardenComplaintsTable td {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border: none !important;
+    border-bottom: 1px dashed #f1f5f9 !important;
+  }
+
+  #wardenComplaintsTable td::before {
+    content: attr(data-label);
+    font-weight: 700;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+  }
 }
